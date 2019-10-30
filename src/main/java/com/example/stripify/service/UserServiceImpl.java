@@ -1,6 +1,7 @@
 package com.example.stripify.service;
 
 import com.example.stripify.model.User;
+import com.example.stripify.model.UserRole;
 import com.example.stripify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserRoleService userRoleService;
+
     @Override
     public Iterable<User> listUsers() {
         return userRepository.findAll();
@@ -20,6 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User signup(User user) {
+        UserRole userRole = userRoleService.getRole(user.getUserRole().getName());
+        user.setUserRole(userRole);
         return userRepository.save(user);
     }
 

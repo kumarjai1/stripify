@@ -1,7 +1,14 @@
 package com.example.stripify.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.JoinColumnOrFormula;
+
 import javax.persistence.*;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Entity
 @Table(name = "users")
 public class User {
@@ -20,6 +27,10 @@ public class User {
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "profile_id")
     private UserProfile userProfile;
+
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "user_role_id", nullable = false)
+    private UserRole userRole;
 
     public User() { }
 
@@ -53,5 +64,13 @@ public class User {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 }
