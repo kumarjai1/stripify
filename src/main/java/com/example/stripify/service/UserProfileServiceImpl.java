@@ -23,6 +23,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfile createUserProfile(UserProfile userProfile, String username) {
         User user = userService.getUser(username);
+        if (user.getUserProfile() != null) {
+            userProfile.setId(user.getUserProfile().getId());
+        }
         user.setUserProfile(userProfile);
         return userService.updateUser(user).getUserProfile();
     }
