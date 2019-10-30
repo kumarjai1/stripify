@@ -27,4 +27,10 @@ public class UserServiceImpl implements UserService {
     public User login(String username, String password) {
         return userRepository.login(username, password);
     }
+
+    @Override
+    public Long deleteById(Long userId) {
+        userRepository.deleteById(userId);
+        return userId;
+    }
 }

@@ -9,4 +9,5 @@ public interface UserService {
     Iterable<User> listUsers();
     User signup(User user);
     User login(String username, String password);
+    Long deleteById(Long userId);
 }

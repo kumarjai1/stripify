@@ -3,10 +3,7 @@ package com.example.stripify.controller;
 import com.example.stripify.model.User;
 import com.example.stripify.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -27,5 +24,10 @@ public class UserController {
     @PostMapping("/login")
     public User login(@RequestBody User user) {
         return userService.login(user.getUsername(), user.getPassword());
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public Long deleteUserById(@PathVariable Long userId) {
+        return userService.deleteById(userId);
     }
 }
