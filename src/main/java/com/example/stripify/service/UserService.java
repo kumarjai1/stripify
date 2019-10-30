@@ -1,5 +1,6 @@
 package com.example.stripify.service;
 
+import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface UserService {
     User getUser(String username);
 
     User updateUser(User user);
+
+    List<Song> addSong(String username, Long songId) throws Exception;
 }

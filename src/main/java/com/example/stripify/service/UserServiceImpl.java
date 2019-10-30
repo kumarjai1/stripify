@@ -1,5 +1,6 @@
 package com.example.stripify.service;
 
+import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
 import com.example.stripify.model.UserRole;
 import com.example.stripify.repository.UserRepository;
@@ -16,6 +17,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRoleService userRoleService;
+
+    @Autowired
+    SongService songService;
 
     @Override
     public Iterable<User> listUsers() {
@@ -49,4 +53,15 @@ public class UserServiceImpl implements UserService {
     public User updateUser(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public List<Song> addSong(String username, Long songId) throws Exception {
+        User user = getUser(username);
+        Song song = songService.getSong(songId);
+        if (song == null) throw new Exception(); // TODO: Make custom exception (e.g. EntityNotFoundException
+        List<Song> userSongs = user.addSong(song);
+        userRepository.save(user);
+        return userSongs;
+    }
+
 }

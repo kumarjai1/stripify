@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.JoinColumnOrFormula;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -31,6 +33,12 @@ public class User {
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "user_role_id", nullable = false)
     private UserRole userRole;
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinTable(name = "user_song",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = @JoinColumn(name = "song_id"))
+    private List<Song> songs;
 
     public User() { }
 
@@ -72,5 +80,19 @@ public class User {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public List<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
+    }
+
+    public List<Song> addSong(Song song) {
+        if (songs == null) songs = new ArrayList<>();
+        songs.add(song);
+        return songs;
     }
 }
