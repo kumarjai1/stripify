@@ -11,11 +11,15 @@ public class User {
     @Column
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column
+    @Column(nullable = false)
     private String password;
+
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "profile_id")
+    private UserProfile userProfile;
 
     public User() { }
 
@@ -41,5 +45,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 }

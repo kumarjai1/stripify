@@ -10,4 +10,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query("FROM User u WHERE u.username = ?1 AND u.password = ?2")
     User login(String username, String password);
+
+    User findByUsername(String username);
 }

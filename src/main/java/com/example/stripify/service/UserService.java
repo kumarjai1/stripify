@@ -10,4 +10,7 @@ public interface UserService {
     User signup(User user);
     User login(String username, String password);
     Long deleteById(Long userId);
+    User getUser(String username);
+
+    User updateUser(User user);
 }
