@@ -4,6 +4,7 @@ import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
 import com.example.stripify.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/user/list")
     public Iterable<User> listUsers() {
         return userService.listUsers();

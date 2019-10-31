@@ -2,10 +2,11 @@ package com.example.stripify.service;
 
 import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     Iterable<User> listUsers();
     User signup(User user);
