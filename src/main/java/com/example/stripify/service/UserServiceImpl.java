@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         // TODO: when we update user, we need to generate a NEW JWT and return to client
+        // TODO: BUT ONLY IF WE ARE CHANGING USERNAME, WHICH WE'LL DEFINITELY NEVER DO!
         return userRepository.save(user);
     }
 

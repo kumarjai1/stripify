@@ -38,6 +38,8 @@ public class UserController {
         return userService.deleteById(userId);
     }
 
+//    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("#username == authentication.name OR hasRole('ADMIN')") // NOTE: This doesn't work for some unknown reason
     @PostMapping("/{username}/{songId}")
     public List<Song> addSong(@PathVariable String username, @PathVariable Long songId) throws Exception {
         return userService.addSong(username, songId);
