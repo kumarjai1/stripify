@@ -11,6 +11,7 @@ public interface UserService extends UserDetailsService {
     Iterable<User> listUsers();
     User signup(User user);
     User login(String username, String password);
+    String login (User user);
     Long deleteById(Long userId);
     User getUser(String username);
 

@@ -4,6 +4,7 @@ import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
 import com.example.stripify.model.UserRole;
 import com.example.stripify.repository.UserRepository;
+import com.example.stripify.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,9 @@ public class UserServiceImpl implements UserService {
     @Qualifier("encoder")
     PasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    JwtUtil jwtUtil;
+
     @Override
     public Iterable<User> listUsers() {
         return userRepository.findAll();
@@ -47,6 +51,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String username, String password) {
         return userRepository.login(username, password);
+    }
+
+    @Override
+    public String login(User user) {
+        if (userRepository.login(user.getUsername(), user.getPassword()) != null) {
+            UserDetails userDetails = loadUserByUsername(user.getUsername());
+            return jwtUtil.generateToken(userDetails);
+        }
+        return null; //TODO: throw an exception
     }
 
     @Override

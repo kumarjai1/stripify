@@ -3,7 +3,9 @@ package com.example.stripify.controller;
 import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
 import com.example.stripify.service.UserService;
+import com.example.stripify.util.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody User user) {
-        return userService.login(user.getUsername(), user.getPassword());
+    public ResponseEntity login(@RequestBody User user) {
+        return ResponseEntity.ok(new JwtResponse(userService.login(user)));
     }
 
     @DeleteMapping("/user/{userId}")
