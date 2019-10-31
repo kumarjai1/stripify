@@ -24,13 +24,13 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public User signup(@RequestBody User user) {
-        return userService.signup(user);
+    public ResponseEntity signup(@RequestBody User user) {
+        return ResponseEntity.ok(userService.signup(user));
     }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody User user) {
-        return ResponseEntity.ok(new JwtResponse(userService.login(user)));
+        return ResponseEntity.ok(new JwtResponse(userService.login(user), user.getUsername()));
     }
 
     @DeleteMapping("/user/{userId}")

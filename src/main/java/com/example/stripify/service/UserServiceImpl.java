@@ -4,6 +4,7 @@ import com.example.stripify.model.Song;
 import com.example.stripify.model.User;
 import com.example.stripify.model.UserRole;
 import com.example.stripify.repository.UserRepository;
+import com.example.stripify.util.JwtResponse;
 import com.example.stripify.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -42,21 +44,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User signup(User user) {
+    public JwtResponse signup(User user) {
         UserRole userRole = userRoleService.getRole(user.getUserRole().getName());
         user.setUserRole(userRole);
-        return userRepository.save(user);
-    }
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-    @Override
-    public User login(String username, String password) {
-        return userRepository.login(username, password);
+        User savedUser = userRepository.save(user);
+        if (savedUser != null) {
+            UserDetails userDetails = loadUserByUsername(savedUser.getUsername());
+            return new JwtResponse(jwtUtil.generateToken(userDetails), savedUser.getUsername());
+        }
+        return null; // TODO: throw some more sensible exception
     }
 
     @Override
     public String login(User user) {
-        if (userRepository.login(user.getUsername(), user.getPassword()) != null) {
-            UserDetails userDetails = loadUserByUsername(user.getUsername());
+        User foundUser = userRepository.findByUsername(user.getUsername());
+
+        if (foundUser != null && bCryptPasswordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
+            UserDetails userDetails = loadUserByUsername(foundUser.getUsername());
             return jwtUtil.generateToken(userDetails);
         }
         return null; //TODO: throw an exception
@@ -75,6 +81,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
+        // TODO: when we update user, we need to generate a NEW JWT and return to client
         return userRepository.save(user);
     }
 
@@ -88,15 +95,15 @@ public class UserServiceImpl implements UserService {
         return userSongs;
     }
 
-
+    // Gets the user by username, then returns a userdetails.User object with provided username and encoding of provided password
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = getUser(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), bCryptPasswordEncoder.encode(user.getPassword()),
-                true, true, true, true, new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                true, true, true, true, getGrantedAuthorities(user));
 
     }
 
