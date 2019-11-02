@@ -26,6 +26,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -119,6 +120,49 @@ public class UserServiceTest {
         Throwable thrown = catchThrowable(() -> userService.signup(user1));
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         verify(jwtUtil, never()).generateToken(any());
+    }
+
+    @Test
+    public void login_ValidUser_Success () {
+        when(userRepository.findByUsername(any())).thenReturn(user1);
+        when(bCryptPasswordEncoder.encode(any())).thenReturn(encodedPassword);
+        when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(true);
+        when(jwtUtil.generateToken(any())).thenReturn(generatedToken);
+
+        String token = userService.login(user1);
+        assertThat(token).isNotNull();
+        assertThat(token).isEqualTo(generatedToken);
+
+    }
+
+    @Test
+    @WithMockUser(username = "user1")
+    public void addSong_ValidUser_SuccessSongList () throws Exception {
+        when(userRepository.findByUsername(anyString())).thenReturn(user1);
+        when(songService.getSong(anyLong())).thenReturn(song1);
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        List<Song> savedList = userService.addSong(user1.getUsername(), song1.getId());
+
+        assertThat(savedList).isNotNull();
+        assertThat(savedList).containsSubsequence(songs);
+
+        verify(userRepository, times(1)).save(user1);
+    }
+
+    @Test
+    @WithMockUser(username = "user1")
+    public void addSong_SongNotValid_ThrowException () throws Exception {
+        when(userRepository.findByUsername(anyString())).thenReturn(user1);
+        when(songService.getSong(anyLong())).thenReturn(null);
+
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        Throwable thrown = catchThrowable(() -> userService.addSong(user1.getUsername(), 2L));
+
+        assertThat(thrown).isInstanceOf(Exception.class);
+
+        verify(userRepository, never()).save(user1);
     }
 
 
