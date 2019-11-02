@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody User user) {
+    public ResponseEntity signup(@Valid @RequestBody User user) {
         return ResponseEntity.ok(userService.signup(user));
     }
 

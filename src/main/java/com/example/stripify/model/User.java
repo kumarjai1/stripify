@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.JoinColumnOrFormula;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,8 @@ public class User {
     @Column
     private Long id;
 
+    @NotNull(message = "Username is required")
+    @NotBlank(message = "Username cannot be blank")
     @Column(unique = true, nullable = false)
     private String username;
 
